@@ -5,7 +5,7 @@
     <application
         android:theme="@android:style/Theme.Material.Light.NoActionBar"
         android:label="JK Calculator"
-        android:icon="@mipmap/ic_launcher">
+        android:icon="@drawable/ic_launcher"
 
         <meta-data
             android:name="com.google.android.gms.ads.APPLICATION_ID"
