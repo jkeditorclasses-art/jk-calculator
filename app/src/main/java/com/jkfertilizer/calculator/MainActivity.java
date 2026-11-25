@@ -73,12 +73,24 @@ public class MainActivity extends Activity {
         LinearLayout root = column();
         root.setPadding(dp(18),dp(22),dp(18),dp(24));
 
+        ImageView logo = new ImageView(this);
+        logo.setImageResource(R.drawable.ic_launcher);
+        LinearLayout.LayoutParams logoParams = new LinearLayout.LayoutParams(dp(64), dp(64));
+        logoParams.gravity = Gravity.CENTER_HORIZONTAL;
+        logo.setLayoutParams(logoParams);
+        logo.setAlpha(0f);
+        logo.setScaleX(0.6f);
+        logo.setScaleY(0.6f);
+        root.addView(logo);
+        logo.animate().alpha(1f).scaleX(1f).scaleY(1f).setDuration(700).start();
+
         TextView title = text("🧮 JK Calculator",24,true);
         title.setAlpha(0f);
         title.setScaleX(0.7f);
         title.setScaleY(0.7f);
+        title.setTextColor(Color.rgb(20,75,170));
+        root.addView(title);
         title.animate().alpha(1f).scaleX(1f).scaleY(1f).setDuration(700).start();
-        title.setTextColor(Color.rgb(20,75,170)); root.addView(title);
         root.addView(text("ସାର ଦୋକାନର ଓଜନ ଓ ଦାମ ହିସାବ",15,false));
         root.addView(space());
 
@@ -98,13 +110,37 @@ public class MainActivity extends Activity {
 
         root.addView(space());
         root.addView(text("ଓଜନ ଅନୁସାରେ ଟଙ୍କା",18,true));
-        grams = field("ଗ୍ରାମ ଲେଖନ୍ତୁ","500"); root.addView(grams);
-        kg = field("କିଲୋଗ୍ରାମ (ଇଚ୍ଛାଧୀନ)",""); root.addView(kg);
-        Button calc2 = button("ଦାମ ବାହାର କରନ୍ତୁ"); root.addView(calc2);
+        grams = field("ଓଜନ ଲେଖନ୍ତୁ","500"); root.addView(grams);
+
+        final boolean[] weightInKg = {false};
+        Button gramUnit = button("Gram ✓");
+        Button kgUnit = button("KG");
+        root.addView(gramUnit);
+        root.addView(kgUnit);
+
+        gramUnit.setOnClickListener(v -> {
+            weightInKg[0] = false;
+            gramUnit.setText("Gram ✓");
+            kgUnit.setText("KG");
+        });
+
+        kgUnit.setOnClickListener(v -> {
+            weightInKg[0] = true;
+            gramUnit.setText("Gram");
+            kgUnit.setText("KG ✓");
+        });
+
+        Button calc2 = button("ଦାମ ବାହାର କରନ୍ତୁ");
+        root.addView(calc2);
         calc2.setOnClickListener(v -> {
-            double r=val(rate), g=val(grams)+val(kg)*1000;
-            if(r<=0 || g<0){show("ଦୟାକରି ଠିକ୍ ଓଜନ ଲେଖନ୍ତୁ");return;}
-            show(df.format(g)+" ଗ୍ରାମର ଦାମ = ₹"+df.format(g*r/1000));
+            double r = val(rate);
+            double entered = val(grams);
+            if(r <= 0 || entered <= 0) {
+                show("ଦୟାକରି ଠିକ୍ ଦାମ ଓ ଓଜନ ଲେଖନ୍ତୁ");
+                return;
+            }
+            double g = weightInKg[0] ? entered * 1000 : entered;
+            show(df.format(g)+" ଗ୍ରାମ ("+df.format(g/1000)+" KG) ର ଦାମ = ₹"+df.format(g*r/1000));
         });
 
         root.addView(space());
