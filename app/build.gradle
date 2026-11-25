@@ -6,6 +6,10 @@ android {
     namespace 'com.jkfertilizer.calculator'
     compileSdk 35
 
+    buildFeatures {
+        buildConfig true
+    }
+
     defaultConfig {
         applicationId 'com.jkfertilizer.calculator'
         minSdk 23
