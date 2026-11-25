@@ -7,6 +7,12 @@ import android.graphics.Typeface;
 import android.graphics.Color;
 import android.view.Gravity;
 import android.view.View;
+import android.view.MotionEvent;
+import android.view.animation.Animation;
+import android.view.animation.ScaleAnimation;
+import android.view.animation.AlphaAnimation;
+import android.view.animation.TranslateAnimation;
+import android.view.animation.AnimationSet;
 import android.widget.*;
 import com.google.android.gms.ads.AdRequest;
 import com.google.android.gms.ads.AdSize;
@@ -37,13 +43,23 @@ public class MainActivity extends Activity {
         return e;
     }
     Button button(String label) {
-        Button b = new Button(this); b.setText(label); return b;
+        Button b = new Button(this); b.setText(label); b.setOnTouchListener((v,event) -> { if(event.getAction() == MotionEvent.ACTION_DOWN) { v.animate().scaleX(0.94f).scaleY(0.94f).setDuration(100).start(); } else if(event.getAction() == MotionEvent.ACTION_UP || event.getAction() == MotionEvent.ACTION_CANCEL) { v.animate().scaleX(1f).scaleY(1f).setDuration(150).start(); } return false; }); return b;
     }
     double val(EditText e) {
         try { return Double.parseDouble(e.getText().toString().trim()); }
         catch(Exception ex) { return 0; }
     }
-    void show(String s) { result.setText(s); }
+    void show(String s) {
+        result.setText(s);
+        AlphaAnimation fade = new AlphaAnimation(0f, 1f);
+        fade.setDuration(400);
+        TranslateAnimation slide = new TranslateAnimation(0, 0, dp(18), 0);
+        slide.setDuration(400);
+        AnimationSet set = new AnimationSet(true);
+        set.addAnimation(fade);
+        set.addAnimation(slide);
+        result.startAnimation(set);
+    }
 
     @Override public void onCreate(Bundle b) {
         super.onCreate(b);
@@ -58,6 +74,10 @@ public class MainActivity extends Activity {
         root.setPadding(dp(18),dp(22),dp(18),dp(24));
 
         TextView title = text("🧮 JK Calculator",24,true);
+        title.setAlpha(0f);
+        title.setScaleX(0.7f);
+        title.setScaleY(0.7f);
+        title.animate().alpha(1f).scaleX(1f).scaleY(1f).setDuration(700).start();
         title.setTextColor(Color.rgb(20,75,170)); root.addView(title);
         root.addView(text("ସାର ଦୋକାନର ଓଜନ ଓ ଦାମ ହିସାବ",15,false));
         root.addView(space());
